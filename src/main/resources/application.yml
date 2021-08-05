@@ -1,0 +1,116 @@
+--- # DEFAULT SETTING
+# spring.profiles.active : active 별도의 설정이 없을 경우, 활성화 처리할 profile 설정값
+# spring.main.allow-bean-definition-overriding : Spring Boot 에서 이미 생성한 Bean을 재정의 할 수 있는지 여부
+# spring.session.timeout : 세션 타임아웃 설정, 초단위로 구성
+# spring.kafka.consumer.group-id : kafka consumer 의 Group ID 지정
+
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  session:
+    timeout: 600
+#  kafka:
+#    consumer:
+#      group-id: webapp
+
+# datasource.pagehelper.[poolname].database-type : pagehelper에 어떤 DATABASE를 연결하는지 알려주는 설정값
+# => 가능 설정값 : oracle, mysql, mariadb, sqlite, hsqldb, postgresql, db2, sqlserver, informix, h2, sqlserver2012, derby
+# datasource.mybatis.config-location : mybatis 기본 설정 파일 경로 지정
+datasource:
+  pagehelper:
+    primary:
+      database-type: mariadb
+    second:
+      database-type: mariadb
+  mybatis:
+    config-location: classpath:mybatis/mybatis-config.xml
+
+# server.servlet.encoding : Embedded Tomcat의 인코딩 설정
+# server.shutdown
+#  : Spring Boot 2.3 버전 이후부터 재공되는 기능
+#  : 정상적으로 종료할 수 있도록 기다려주는 기본 시간은 30초. 만약 조정하고 싶다면 spring.lifecycle.timeout-per-shutdown-phase=1m 처럼 옵션 추가
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  shutdown: graceful
+  port: 8081
+
+# jasypt.encryptor.bean : 프로퍼티 암복호화 Bean 설정
+# jasypt.encryptor.password : 프로퍼티 암복호화 KEY 설정 (설정 값에 따라 암복호화문이 달라지므로 변경에 유의할 것)
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    password: webapp
+
+# XML 리턴이 필요할 경우 아래 주석 해제 필요 (이 경우, JSON 리턴도 NULL이 존재하면 출력되지 않게됨)
+#jackson:
+#    default-property-inclusion: NON_NULL
+
+--- ## ENVIROMENT 별 설정
+# spring.config.activate.on-profile : 환경 프로파일명
+# spring.pid.file : 현재 PID 저장 경로 (local에서는 사용하지 않음)
+
+# spring.redis.host : Redis 서버 IP (혹은 도메인)
+# spring.redis.port : Redis 서버 Port
+
+# spring.session.store-type : 세션 저장소 타입 지정 (none 또는 redis)
+
+# spring.session.redis.flush-mode : redis 기록 방식 지정 (on-save : 호출 될 때만 redis에 기록, immediate : 즉시 redis에 기록)
+# spring.session.redis.namespace : 세션 저장 key prefix value, default 값은 spring:session
+
+# spring.kafka.bootstrap-servers : kafka broker 서버 설정
+
+# datasource.[poolname].hikari.driver-class-name : JDBC Driver Class 지정
+# datasource.[poolname].hikari.jdbc-url : JDBC URL
+# datasource.[poolname].hikari.username : DBMS ID
+# datasource.[poolname].hikari.password : DBMS PW
+# datasource.[poolname].hikari.auto-commit : 자동 커밋 여부 (true or false)
+# datasource.[poolname].hikari.connection-test-query : DB 커넥션 체크 Query
+# datasource.[poolname].hikari.minimum-idle : 최소 연결 유지 connection 개수
+# datasource.[poolname].hikari.maximum-pool-size : 최대 풀 유지 connection 개수
+# datasource.[poolname].hikari.pool-name : 해당 풀 명칭
+
+--- # LOCAL ENVIRONMENT
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+#  session:
+#    store-type: none # local 환경에서는 세션 저장소를 연동하지 않는다.
+#  kafka:
+#    bootstrap-servers: fishsin.synology.me:9092
+datasource:
+  jpa:
+    hikari:
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbc-url: "jdbc:log4jdbc:mariadb://192.168.5.140:3306/testdb?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
+      username: ENC(bkeGk7qiIu+pORKfCvW/Wg==)
+      password: ENC(viV3E186wBGtISc+X7DeHJlD8xN+D1Zd)
+      auto-commit: false
+      connection-test-query: SELECT 1
+      minimum-idle: 1
+      maximum-pool-size: 10
+      pool-name: primary-ds
+  mybatis:
+    hikari:
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbc-url: "jdbc:log4jdbc:mariadb://192.168.5.140:3306/testdb2?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
+      username: ENC(FcQYB4CXQNJX5vVvJxVSwg==)
+      password: ENC(viV3E186wBGtISc+X7DeHJlD8xN+D1Zd)
+      auto-commit: false
+      connection-test-query: SELECT 1
+      minimum-idle: 1
+      maximum-pool-size: 10
+      pool-name: second-ds

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.datasolution.member">
+    <select id="selectMemberList"
+            resultType="kr.datasolution.member.mybatis.vo.MemberVo">
+        SELECT member_no
+        , member_id
+        , member_name
+        , reg_dt
+        , upd_dt
+        FROM members
+    </select>
+
+    <insert id="insertMember"
+            parameterType="kr.datasolution.member.mybatis.vo.MemberVo">
+        INSERT
+          INTO members
+               (
+               member_no
+             , member_id
+             , member_name
+             , reg_dt
+               )
+        VALUES (
+               #{memberNo}
+             , #{memberId}
+             , #{memberName}
+             , #{regDt}
+               )
+    </insert>
+</mapper>
